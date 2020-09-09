@@ -1,7 +1,7 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 
-interface ComponentNameProps { }
+// interface ComponentNameProps { }
 
 const Onboarding = () => {
   return <View style={[styles.container]} />;
