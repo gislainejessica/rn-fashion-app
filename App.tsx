@@ -22,9 +22,7 @@ const AuthenticationNavigator = () => (
 export default function App() {
   return (
     <LoadAssets {...{ fonts }}>
-      {/* <NavigationContainer> */}
       <AuthenticationNavigator />
-      {/* </NavigationContainer> */}
     </LoadAssets>
   );
 }
