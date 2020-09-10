@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useRef } from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
 import {
   useValue,
   onScrollEvent,
   interpolateColor,
 } from "react-native-redash/src/v1";
-import Animated from "react-native-reanimated";
+import Animated, { multiply } from "react-native-reanimated";
 
 import Slider, { SLIDER_HEIGHT } from "./Slider";
 import SubSlider from "./SubSlider";
@@ -46,12 +46,14 @@ const Onboarding = () => {
     inputRange: slides.map((_, i) => i * width),
     outputRange: slides.map((slide) => slide.color),
   });
+  const scroll = useRef<Animated.ScrollView>(null);
 
   return (
     <View style={[styles.container]}>
       <Animated.View style={[styles.slider, { backgroundColor }]}>
         <Animated.ScrollView
           horizontal
+          ref={scroll}
           snapToInterval={width}
           decelerationRate={"fast"}
           showsHorizontalScrollIndicator={false}
@@ -64,20 +66,37 @@ const Onboarding = () => {
           ))}
         </Animated.ScrollView>
       </Animated.View>
-      <View style={[styles.footer]}>
+
+      <Animated.View style={[styles.footer, { backgroundColor }]}>
         {/* Pegar as cores na parte de baixo dinamicamente (Animated) */}
-        <Animated.View style={[styles.insideFooter, { backgroundColor }]}>
-          <View style={styles.outsideFooter}>
+        <View style={[styles.insideFooter]}>
+          <Animated.View
+            style={[
+              styles.outsideFooter,
+              {
+                transform: [{ translateX: multiply(x, -1) }],
+                width: width * slides.length,
+                flex: 1,
+              },
+            ]}
+          >
             {slides.map(({ subtitle, description }, index) => (
               <SubSlider
                 key={index}
                 last={index === slides.length - 1}
+                onPress={() => {
+                  if (scroll.current) {
+                    scroll.current
+                      .getNode()
+                      .scrollTo({ x: width * (index + 1), animated: true });
+                  }
+                }}
                 {...{ subtitle, description }}
               />
             ))}
-          </View>
-        </Animated.View>
-      </View>
+          </Animated.View>
+        </View>
+      </Animated.View>
     </View>
   );
 };
